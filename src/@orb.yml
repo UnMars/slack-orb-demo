@@ -30,6 +30,16 @@ commands:
         description: "Message to send"
         default: "Notification from CircleCI"
     steps:
+      - run:
+          name: Debug Slack Environment
+          command: |
+            echo "=== SLACK DEBUG INFO ==="
+            echo "SLACK_WEBHOOK: ${SLACK_WEBHOOK:+SET}"
+            echo "SLACK_ACCESS_TOKEN: ${SLACK_ACCESS_TOKEN:+SET}"
+            echo "SLACK_DEFAULT_CHANNEL: ${SLACK_DEFAULT_CHANNEL:-NOT_SET}"
+            echo "Channel parameter: << parameters.channel >>"
+            echo "Message parameter: << parameters.message >>"
+            echo "========================="
       - slack/notify:
           event: always
           channel: << parameters.channel >>
@@ -61,6 +71,16 @@ jobs:
     executor: default
     steps:
       - checkout
+      - run:
+          name: Debug Job Environment
+          command: |
+            echo "=== JOB DEBUG INFO ==="
+            echo "SLACK_WEBHOOK: ${SLACK_WEBHOOK:+SET}"
+            echo "SLACK_ACCESS_TOKEN: ${SLACK_ACCESS_TOKEN:+SET}"
+            echo "SLACK_DEFAULT_CHANNEL: ${SLACK_DEFAULT_CHANNEL:-NOT_SET}"
+            echo "Channel parameter: << parameters.channel >>"
+            echo "Message parameter: << parameters.message >>"
+            echo "======================"
       - notify:
           channel: << parameters.channel >>
           message: << parameters.message >>
