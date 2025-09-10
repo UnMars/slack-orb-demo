@@ -33,4 +33,10 @@ steps:
       name: Send targeted Slack notification
       command: |
         chmod +x /tmp/notify.sh
-        /tmp/notify.sh "<< parameters.status >>" "<< parameters.target >>" "<< parameters.message >>" "<< parameters.mention >>" "<< parameters.webhook_url >>"
+        /tmp/notify.sh "$1" "$2" "$3" "$4" "$5"
+      environment:
+        STATUS: << parameters.status >>
+        TARGET: << parameters.target >>
+        MESSAGE: << parameters.message >>
+        MENTION: << parameters.mention >>
+        WEBHOOK: << parameters.webhook_url >>

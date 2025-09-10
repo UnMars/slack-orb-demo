@@ -6,5 +6,5 @@ export CIRCLE_BRANCH="$CIRCLE_BRANCH"
 export CIRCLE_BUILD_URL="$CIRCLE_BUILD_URL"
 export CIRCLE_BUILD_NUM="$CIRCLE_BUILD_NUM"
 
-# Execute script
-/tmp/slack-notify.sh "$1" "$2" "$3" "$4" "$5"
+# Execute script with environment variables
+/tmp/slack-notify.sh "$STATUS" "$TARGET" "$MESSAGE" "$MENTION" "$WEBHOOK"
