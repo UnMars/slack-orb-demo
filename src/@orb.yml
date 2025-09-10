@@ -33,7 +33,18 @@ commands:
       - slack/notify:
           event: always
           channel: << parameters.channel >>
-          message: << parameters.message >>
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<< parameters.message >>"
+                  }
+                }
+              ]
+            }
 
 jobs:
   notify:
