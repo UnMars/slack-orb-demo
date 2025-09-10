@@ -29,6 +29,10 @@ commands:
         type: string
         description: "Message to send"
         default: "Notification from CircleCI"
+      slack_access_token:
+        type: string
+        description: "Slack access token"
+        default: $SLACK_ACCESS_TOKEN
     steps:
       - run:
           name: Debug Slack Environment
@@ -39,7 +43,13 @@ commands:
             echo "SLACK_DEFAULT_CHANNEL: ${SLACK_DEFAULT_CHANNEL:-NOT_SET}"
             echo "Channel parameter: << parameters.channel >>"
             echo "Message parameter: << parameters.message >>"
+            echo "Token parameter: << parameters.slack_access_token >>"
             echo "========================="
+      - run:
+          name: Set Slack Environment
+          command: |
+            export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
+            echo "SLACK_ACCESS_TOKEN set from parameter"
       - slack/notify:
           event: always
           channel: << parameters.channel >>
@@ -68,6 +78,10 @@ jobs:
         type: string
         description: "Message to send"
         default: "Notification from CircleCI"
+      slack_access_token:
+        type: string
+        description: "Slack access token"
+        default: $SLACK_ACCESS_TOKEN
     executor: default
     steps:
       - checkout
@@ -80,7 +94,14 @@ jobs:
             echo "SLACK_DEFAULT_CHANNEL: ${SLACK_DEFAULT_CHANNEL:-NOT_SET}"
             echo "Channel parameter: << parameters.channel >>"
             echo "Message parameter: << parameters.message >>"
+            echo "Token parameter: << parameters.slack_access_token >>"
             echo "======================"
+      - run:
+          name: Set Slack Environment
+          command: |
+            export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
+            echo "SLACK_ACCESS_TOKEN set from parameter"
       - notify:
           channel: << parameters.channel >>
           message: << parameters.message >>
+          slack_access_token: << parameters.slack_access_token >>
