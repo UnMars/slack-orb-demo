@@ -6,10 +6,6 @@ orbs:
 workflows:
   test:
     jobs:
-      - notification/notify_success:
+      - notification/notify:
           channel: "#test"
-          message: "Test success message"
-      - notification/notify_custom:
-          channel: "#test"
-          message: "Test custom message"
-          status: "info"
+          message: "Test notification message"

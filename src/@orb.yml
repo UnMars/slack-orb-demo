@@ -18,8 +18,8 @@ executors:
       - image: cimg/base:current
 
 commands:
-  notify_success:
-    description: "Send a success notification to Slack"
+  notify:
+    description: "Send a notification to Slack"
     parameters:
       channel:
         type: string
@@ -27,141 +27,17 @@ commands:
         default: $SLACK_DEFAULT_CHANNEL
       message:
         type: string
-        description: "Success message to send"
-        default: "✅ Build completed successfully!"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: ""
+        description: "Message to send"
+        default: "Notification from CircleCI"
     steps:
       - slack/notify:
           event: always
-          template: success_tagged_deploy_1
           channel: << parameters.channel >>
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<< parameters.mention >> << parameters.message >>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Project: $CIRCLE_PROJECT_REPONAME | Branch: $CIRCLE_BRANCH | Build: <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>"
-                    }
-                  ]
-                }
-              ]
-            }
-
-  notify_failure:
-    description: "Send a failure notification to Slack"
-    parameters:
-      channel:
-        type: string
-        description: "Slack channel to send message to"
-        default: $SLACK_DEFAULT_CHANNEL
-      message:
-        type: string
-        description: "Failure message to send"
-        default: "❌ Build failed!"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: "@here"
-    steps:
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-          channel: << parameters.channel >>
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<< parameters.mention >> << parameters.message >>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Project: $CIRCLE_PROJECT_REPONAME | Branch: $CIRCLE_BRANCH | Build: <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>"
-                    }
-                  ]
-                }
-              ]
-            }
-
-  notify_custom:
-    description: "Send a custom notification to Slack"
-    parameters:
-      channel:
-        type: string
-        description: "Slack channel to send message to"
-        default: $SLACK_DEFAULT_CHANNEL
-      message:
-        type: string
-        description: "Custom message to send"
-        default: "📢 Notification"
-      status:
-        type: string
-        description: "Status type (success, failure, warning, info)"
-        default: "info"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: ""
-    steps:
-      - run:
-          name: Determine emoji based on status
-          command: |
-            case "<< parameters.status >>" in
-              "success") EMOJI="✅" ;;
-              "failure") EMOJI="❌" ;;
-              "warning") EMOJI="⚠️" ;;
-              "info") EMOJI="ℹ️" ;;
-              *) EMOJI="📢" ;;
-            esac
-            echo "export EMOJI='$EMOJI'" >> $BASH_ENV
-
-      - slack/notify:
-          event: always
-          channel: << parameters.channel >>
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<< parameters.mention >> $EMOJI << parameters.message >>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Project: $CIRCLE_PROJECT_REPONAME | Branch: $CIRCLE_BRANCH | Build: <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>"
-                    }
-                  ]
-                }
-              ]
-            }
+          message: << parameters.message >>
 
 jobs:
-  notify_success:
-    description: "Job to send success notifications to Slack"
+  notify:
+    description: "Job to send notifications to Slack"
     parameters:
       channel:
         type: string
@@ -169,67 +45,11 @@ jobs:
         default: $SLACK_DEFAULT_CHANNEL
       message:
         type: string
-        description: "Success message to send"
-        default: "✅ Build completed successfully!"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: ""
+        description: "Message to send"
+        default: "Notification from CircleCI"
     executor: default
     steps:
       - checkout
-      - notify_success:
+      - notify:
           channel: << parameters.channel >>
           message: << parameters.message >>
-          mention: << parameters.mention >>
-
-  notify_failure:
-    description: "Job to send failure notifications to Slack"
-    parameters:
-      channel:
-        type: string
-        description: "Slack channel to send message to"
-        default: $SLACK_DEFAULT_CHANNEL
-      message:
-        type: string
-        description: "Failure message to send"
-        default: "❌ Build failed!"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: "@here"
-    executor: default
-    steps:
-      - checkout
-      - notify_failure:
-          channel: << parameters.channel >>
-          message: << parameters.message >>
-          mention: << parameters.mention >>
-
-  notify_custom:
-    description: "Job to send custom notifications to Slack"
-    parameters:
-      channel:
-        type: string
-        description: "Slack channel to send message to"
-        default: $SLACK_DEFAULT_CHANNEL
-      message:
-        type: string
-        description: "Custom message to send"
-        default: "📢 Notification"
-      status:
-        type: string
-        description: "Status type (success, failure, warning, info)"
-        default: "info"
-      mention:
-        type: string
-        description: "Additional mentions (e.g., @devops-team)"
-        default: ""
-    executor: default
-    steps:
-      - checkout
-      - notify_custom:
-          channel: << parameters.channel >>
-          message: << parameters.message >>
-          status: << parameters.status >>
-          mention: << parameters.mention >>

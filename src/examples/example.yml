@@ -11,40 +11,20 @@ usage:
   workflows:
     example:
       jobs:
-      # Success notification
-      - notification/notify_success:
+      # Simple notification
+      - notification/notify:
           channel: "#devops"
           message: "✅ Deployment to production completed successfully! 🚀"
-          mention: "@devops-team"
           filters:
             branches:
               only: main
 
-      # Failure notification
-      - notification/notify_failure:
-          channel: "#devops"
-          message: "❌ Build failed on branch $CIRCLE_BRANCH"
-          mention: "@here"
-          when: on_fail
-
-      # Custom notification
-      - notification/notify_custom:
+      # Another notification
+      - notification/notify:
           channel: "#general"
           message: "New feature deployed to staging! 🎉"
-          status: "info"
-          mention: "@devops-team @qa-team"
 
-      # Custom success notification
-      - notification/notify_custom:
+      # Notification with custom message
+      - notification/notify:
           channel: "#alerts"
           message: "Database migration completed successfully"
-          status: "success"
-          mention: "@dba-team"
-
-      # Using commands directly in jobs
-      - build:
-        steps:
-          - run: echo "Building..."
-          - notification/notify_success:
-              channel: "#builds"
-              message: "Build completed successfully!"
