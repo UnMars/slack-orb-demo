@@ -1,6 +1,6 @@
 description: >
   Example usage of the Slack notification orb showing how to send targeted
-  notifications to specific people, teams, and channels with custom messages.
+  notifications to specific people, teams, or channels with custom messages.
 
 version: 2.1
 
@@ -11,41 +11,40 @@ usage:
   workflows:
     example:
       jobs:
-      # Notify specific person
-      - notification/slack:
-          channel: "@guillaume"
-          message: "Your deployment to production completed successfully! 🚀"
-          status: "success"
+      # Success notification
+      - notification/notify_success:
+          channel: "#devops"
+          message: "✅ Deployment to production completed successfully! 🚀"
           mention: "@devops-team"
           filters:
             branches:
               only: main
 
-      # Notify team channel
-      - notification/slack:
+      # Failure notification
+      - notification/notify_failure:
           channel: "#devops"
-          message: "Build failed on branch $CIRCLE_BRANCH"
-          status: "failure"
+          message: "❌ Build failed on branch $CIRCLE_BRANCH"
           mention: "@here"
           when: on_fail
 
-      # Notify everyone
-      - notification/slack:
-          channel: "@here"
+      # Custom notification
+      - notification/notify_custom:
+          channel: "#general"
           message: "New feature deployed to staging! 🎉"
           status: "info"
           mention: "@devops-team @qa-team"
 
-      # Notify specific channel with custom message
-      - notification/slack:
+      # Custom success notification
+      - notification/notify_custom:
           channel: "#alerts"
           message: "Database migration completed successfully"
           status: "success"
           mention: "@dba-team"
 
-      # Use the job for multiple notifications
-      - notification/notify:
-          channel: "#general"
-          message: "Weekly deployment completed! 🚀"
-          status: "success"
-          mention: "@everyone"
+      # Using commands directly in jobs
+      - build:
+          steps:
+            - run: echo "Building..."
+            - notification/notify_success:
+                channel: "#builds"
+                message: "Build completed successfully!"

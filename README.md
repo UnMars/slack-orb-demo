@@ -1,15 +1,16 @@
 # Slack Notification Orb for CircleCI
 
-A simple and powerful Slack notification orb for CircleCI. Send targeted notifications to specific people, teams, or channels with customizable messages and build status.
+A simple and reusable Slack notification orb for CircleCI. Provides easy-to-use commands and jobs for sending notifications to your team with customizable messages and build status using the official CircleCI Slack orb.
 
 ## Features
 
 - 🎯 **Targeted notifications**: Send to specific people (@username), teams (@channel), or channels (#channel)
 - 🎨 **Rich formatting**: Customizable messages with emojis and colors
 - 📊 **Build context**: Automatic inclusion of project, branch, and build information
-- 🔧 **Flexible**: Easy to customize and extend
+- 🔧 **Simple API**: Easy-to-use commands and jobs
 - 📱 **Real-time**: Instant notifications for your team
 - 💬 **Mentions**: Additional mentions for specific teams or people
+- 🚀 **Official integration**: Uses the official CircleCI Slack orb
 
 ## Usage
 
@@ -24,81 +25,83 @@ orbs:
 workflows:
   notify_example:
     jobs:
-      - notification/notify:
-          slack_channel: "#devops"
+      - notification/notify_success:
+          channel: "#devops"
           message: "Deployment completed successfully! 🚀"
-          status: "success"
+          mention: "@devops-team"
 ```
 
-### Individual Commands
+### Available Commands
 
-#### Slack Notification
+#### Success Notification
 
 ```yaml
-- notification/slack:
+- notification/notify_success:
     channel: "#general"
-    message: "Build completed!"
-    status: "success"
+    message: "✅ Build completed successfully!"
     mention: "@devops-team"
 ```
 
-#### Discord Notification
+#### Failure Notification
 
 ```yaml
-- notification/discord:
-    webhook_url: $DISCORD_WEBHOOK_URL
-    message: "Build completed!"
-    status: "success"
-    username: "CircleCI Bot"
+- notification/notify_failure:
+    channel: "#alerts"
+    message: "❌ Build failed!"
+    mention: "@here"
 ```
 
-#### Teams Notification
+#### Custom Notification
 
 ```yaml
-- notification/teams:
-    webhook_url: $TEAMS_WEBHOOK_URL
-    message: "Build completed!"
-    status: "success"
-    title: "CircleCI Build Notification"
+- notification/notify_custom:
+    channel: "#general"
+    message: "Custom notification"
+    status: "info" # success, failure, warning, info
+    mention: "@team"
 ```
 
-#### Custom Webhook
+### Available Jobs
+
+#### Success Job
 
 ```yaml
-- notification/webhook:
-    webhook_url: $CUSTOM_WEBHOOK_URL
-    message: "Build completed!"
-    status: "success"
-    custom_payload: |
-      {
-        "custom_field": "custom_value",
-        "status": "success"
-      }
+- notification/notify_success:
+    channel: "#devops"
+    message: "✅ Deployment completed successfully!"
+    mention: "@devops-team"
+```
+
+#### Failure Job
+
+```yaml
+- notification/notify_failure:
+    channel: "#alerts"
+    message: "❌ Build failed!"
+    mention: "@here"
+```
+
+#### Custom Job
+
+```yaml
+- notification/notify_custom:
+    channel: "#general"
+    message: "Custom notification"
+    status: "info"
+    mention: "@team"
 ```
 
 ## Parameters
 
 ### Common Parameters
 
-- `message`: Message to send (default: "Build completed!")
-- `status`: Build status - success, failure, warning (default: "success")
-- `webhook_url`: Webhook URL for the service
+- `channel`: Slack channel to send message to (default: $SLACK_DEFAULT_CHANNEL)
+- `message`: Message to send
+- `mention`: Additional mentions (e.g., @devops-team @manager)
 
-### Slack-specific
+### Custom Notification Parameters
 
-- `channel`: Slack channel (default: $SLACK_DEFAULT_CHANNEL)
-
-### Discord-specific
-
-- `username`: Bot username (default: "CircleCI Bot")
-
-### Teams-specific
-
-- `title`: Notification title (default: "CircleCI Build Notification")
-
-### Webhook-specific
-
-- `custom_payload`: Custom JSON payload (overrides default)
+- `status`: Status type - success, failure, warning, info (default: "info")
 
 ## Environment Variables
 
@@ -106,9 +109,6 @@ Set these in your CircleCI project settings:
 
 - `SLACK_ACCESS_TOKEN`: Your Slack bot access token (starts with `xoxb-`)
 - `SLACK_DEFAULT_CHANNEL`: Default Slack channel ID (e.g., `C1234567890`)
-- `DISCORD_WEBHOOK_URL`: Your Discord webhook URL
-- `TEAMS_WEBHOOK_URL`: Your Teams webhook URL
-- `CUSTOM_WEBHOOK_URL`: Your custom webhook URL
 
 ## Examples
 
@@ -127,10 +127,10 @@ workflows:
       - test
       - deploy:
           requires: [build, test]
-      - notification/notify:
-          slack_channel: "#deployments"
+      - notification/notify_success:
+          channel: "#deployments"
           message: "Deployment to production completed! 🚀"
-          status: "success"
+          mention: "@devops-team"
           requires: [deploy]
           filters:
             branches:
@@ -140,21 +140,35 @@ workflows:
 ### Conditional Notifications
 
 ```yaml
-- notification/notify:
-    slack_channel: "#alerts"
+- notification/notify_failure:
+    channel: "#alerts"
     message: "Build failed on branch $CIRCLE_BRANCH"
-    status: "failure"
+    mention: "@here"
     when: on_fail
+```
+
+### Using Commands in Jobs
+
+```yaml
+jobs:
+  build_and_notify:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run: echo "Building..."
+      - notification/notify_success:
+          channel: "#builds"
+          message: "Build completed successfully!"
 ```
 
 ## Development
 
 This orb is built using the CircleCI CLI and follows the standard orb structure:
 
-- `src/commands/`: Individual notification commands
-- `src/jobs/`: Combined notification jobs
-- `src/executors/`: Execution environments
+- `src/@orb.yml`: Main orb definition
 - `src/examples/`: Usage examples
+- `test-config.yml`: Test configuration
 
 ## License
 
