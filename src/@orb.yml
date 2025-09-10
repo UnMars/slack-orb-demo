@@ -62,16 +62,16 @@ commands:
                 COLOR="#36a64f"
                 ;;
             esac
-            
+
             # Build mention string
             MENTION_STRING=""
             if [ -n "<< parameters.mention >>" ]; then
               MENTION_STRING="<< parameters.mention >> "
             fi
-            
+
             # Create message with emoji and mentions
             FULL_MESSAGE="${MENTION_STRING}${EMOJI} << parameters.message >>"
-            
+
             # Export variables for next step
             echo "export EMOJI='$EMOJI'" >> $BASH_ENV
             echo "export COLOR='$COLOR'" >> $BASH_ENV
@@ -82,7 +82,7 @@ commands:
           channel: << parameters.channel >>
           message: |
             ${FULL_MESSAGE}
-            
+
             *Status:* << parameters.status >>
             *Project:* $CIRCLE_PROJECT_REPONAME
             *Branch:* $CIRCLE_BRANCH
