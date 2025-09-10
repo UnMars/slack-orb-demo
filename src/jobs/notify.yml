@@ -39,4 +39,3 @@ steps:
       status: << parameters.status >>
       mention: << parameters.mention >>
       webhook_url: << parameters.webhook_url >>
-      when: on_success
