@@ -1,0 +1,12 @@
+version: 2.1
+
+orbs:
+  notification: ./src/@orb.yml
+
+workflows:
+  test:
+    jobs:
+      - notification/slack:
+          target: "#test"
+          message: "Test message"
+          status: "success"

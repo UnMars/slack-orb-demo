@@ -1,11 +1,16 @@
+description: >
+  Example usage of the Slack notification orb showing how to send targeted
+  notifications to specific people, teams, and channels with custom messages.
+
 version: 2.1
 
-orbs:
-  notification: unmars/slack-orb-demo@dev:alpha
-
-workflows:
-  example:
-    jobs:
+usage:
+  version: 2.1
+  orbs:
+    notification: unmars/slack-orb-demo@dev:alpha
+  workflows:
+    example:
+      jobs:
       # Notify specific person
       - notification/slack:
           target: "@guillaume"
