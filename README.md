@@ -39,7 +39,7 @@ workflows:
     channel: "#general"
     message: "Build completed!"
     status: "success"
-    webhook_url: $SLACK_WEBHOOK_URL
+    mention: "@devops-team"
 ```
 
 #### Discord Notification
@@ -86,7 +86,7 @@ workflows:
 
 ### Slack-specific
 
-- `channel`: Slack channel (default: "#general")
+- `channel`: Slack channel (default: $SLACK_DEFAULT_CHANNEL)
 
 ### Discord-specific
 
@@ -104,7 +104,8 @@ workflows:
 
 Set these in your CircleCI project settings:
 
-- `SLACK_WEBHOOK_URL`: Your Slack webhook URL
+- `SLACK_ACCESS_TOKEN`: Your Slack bot access token (starts with `xoxb-`)
+- `SLACK_DEFAULT_CHANNEL`: Default Slack channel ID (e.g., `C1234567890`)
 - `DISCORD_WEBHOOK_URL`: Your Discord webhook URL
 - `TEAMS_WEBHOOK_URL`: Your Teams webhook URL
 - `CUSTOM_WEBHOOK_URL`: Your custom webhook URL
