@@ -34,10 +34,10 @@ commands:
         description: "Slack access token"
         default: $SLACK_ACCESS_TOKEN
     steps:
-      - run:
-          name: Set Slack Environment
-          command: |
-            export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
+      # - run:
+      #     name: Set Slack Environment
+      #     command: |
+      #       export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
       - slack/notify:
           event: always
           channel: << parameters.channel >>
@@ -73,10 +73,10 @@ jobs:
     executor: default
     steps:
       - checkout
-      - run:
-          name: Set Slack Environment
-          command: |
-            export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
+      # - run:
+      #     name: Set Slack Environment
+      #     command: |
+      #       export SLACK_ACCESS_TOKEN="<< parameters.slack_access_token >>"
       - notify:
           channel: << parameters.channel >>
           message: << parameters.message >>
