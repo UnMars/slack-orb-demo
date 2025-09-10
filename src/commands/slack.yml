@@ -32,11 +32,77 @@ steps:
   - run:
       name: Send targeted Slack notification
       command: |
-        chmod +x /tmp/notify.sh
-        /tmp/notify.sh "$1" "$2" "$3" "$4" "$5"
-      environment:
-        STATUS: << parameters.status >>
-        TARGET: << parameters.target >>
-        MESSAGE: << parameters.message >>
-        MENTION: << parameters.mention >>
-        WEBHOOK: << parameters.webhook_url >>
+        # Determine emoji and color based on status
+        case "<< parameters.status >>" in
+          "success")
+            EMOJI="✅"
+            COLOR="good"
+            ;;
+          "failure")
+            EMOJI="❌"
+            COLOR="danger"
+            ;;
+          "warning")
+            EMOJI="⚠️"
+            COLOR="warning"
+            ;;
+          "info")
+            EMOJI="ℹ️"
+            COLOR="#36a64f"
+            ;;
+          *)
+            EMOJI="📢"
+            COLOR="#36a64f"
+            ;;
+        esac
+        
+        # Build mention string
+        MENTION_STRING=""
+        if [ -n "<< parameters.mention >>" ]; then
+          MENTION_STRING="<< parameters.mention >> "
+        fi
+        
+        # Create JSON payload with targeted message
+        PAYLOAD=$(cat <<EOF
+        {
+          "channel": "<< parameters.target >>",
+          "username": "CircleCI Bot",
+          "icon_emoji": ":robot_face:",
+          "text": "${MENTION_STRING}${EMOJI} << parameters.message >>",
+          "attachments": [
+            {
+              "color": "$COLOR",
+              "fields": [
+                {
+                  "title": "Status",
+                  "value": "<< parameters.status >>",
+                  "short": true
+                },
+                {
+                  "title": "Project",
+                  "value": "$CIRCLE_PROJECT_REPONAME",
+                  "short": true
+                },
+                {
+                  "title": "Branch",
+                  "value": "$CIRCLE_BRANCH",
+                  "short": true
+                },
+                {
+                  "title": "Build",
+                  "value": "<$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>",
+                  "short": true
+                }
+              ],
+              "footer": "CircleCI",
+              "ts": $(date +%s)
+            }
+          ]
+        }
+        EOF
+        )
+        
+        # Send notification
+        curl -X POST -H 'Content-type: application/json' \
+          --data "$PAYLOAD" \
+          "<< parameters.webhook_url >>"
