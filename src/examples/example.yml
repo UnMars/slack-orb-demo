@@ -13,7 +13,7 @@ usage:
       jobs:
       # Notify specific person
       - notification/slack:
-          target: "@guillaume"
+          channel: "@guillaume"
           message: "Your deployment to production completed successfully! 🚀"
           status: "success"
           mention: "@devops-team"
@@ -23,7 +23,7 @@ usage:
 
       # Notify team channel
       - notification/slack:
-          target: "#devops"
+          channel: "#devops"
           message: "Build failed on branch $CIRCLE_BRANCH"
           status: "failure"
           mention: "@here"
@@ -31,21 +31,21 @@ usage:
 
       # Notify everyone
       - notification/slack:
-          target: "@here"
+          channel: "@here"
           message: "New feature deployed to staging! 🎉"
           status: "info"
           mention: "@devops-team @qa-team"
 
       # Notify specific channel with custom message
       - notification/slack:
-          target: "#alerts"
+          channel: "#alerts"
           message: "Database migration completed successfully"
           status: "success"
           mention: "@dba-team"
 
       # Use the job for multiple notifications
       - notification/notify:
-          target: "#general"
+          channel: "#general"
           message: "Weekly deployment completed! 🚀"
           status: "success"
           mention: "@everyone"

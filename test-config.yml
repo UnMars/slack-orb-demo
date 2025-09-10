@@ -7,6 +7,6 @@ workflows:
   test:
     jobs:
       - notification/slack:
-          target: "#test"
+          channel: "#test"
           message: "Test message"
           status: "success"
