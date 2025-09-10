@@ -40,7 +40,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "<< parameters.message >>"
+                    "text": "<@U09DLG4ECRM> << parameters.message >>"
                   }
                 }
               ]
