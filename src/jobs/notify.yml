@@ -7,22 +7,22 @@ parameters:
     type: string
     description: "Target recipient: @username, @channel, #channel, or @here"
     default: "#general"
-  
+
   message:
     type: string
     description: "Custom message to send"
     default: "Build completed!"
-  
+
   status:
     type: string
     description: "Build status (success, failure, warning, info)"
     default: "success"
-  
+
   mention:
     type: string
     description: "Additional mentions (e.g., @devops-team @manager)"
     default: ""
-  
+
   webhook_url:
     type: string
     description: "Slack webhook URL"
@@ -32,7 +32,7 @@ executor: default
 
 steps:
   - checkout
-  
+
   - slack:
       target: << parameters.target >>
       message: << parameters.message >>

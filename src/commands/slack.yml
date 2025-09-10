@@ -7,22 +7,22 @@ parameters:
     type: string
     description: "Target recipient: @username, @channel, #channel, or @here"
     default: "#general"
-  
+
   message:
     type: string
     description: "Custom message to send"
     default: "Build completed!"
-  
+
   status:
     type: string
     description: "Build status (success, failure, warning, info)"
     default: "success"
-  
+
   webhook_url:
     type: string
     description: "Slack webhook URL"
     default: $SLACK_WEBHOOK_URL
-  
+
   mention:
     type: string
     description: "Additional mentions (e.g., @devops-team @manager)"
@@ -32,11 +32,11 @@ steps:
   - run:
       name: Send targeted Slack notification
       command: |
-        # Set environment variables
-        export CIRCLE_PROJECT_REPONAME="$CIRCLE_PROJECT_REPONAME"
-        export CIRCLE_BRANCH="$CIRCLE_BRANCH"
-        export CIRCLE_BUILD_URL="$CIRCLE_BUILD_URL"
-        export CIRCLE_BUILD_NUM="$CIRCLE_BUILD_NUM"
-        
-        # Execute script
-        /tmp/slack-notify.sh "<< parameters.status >>" "<< parameters.target >>" "<< parameters.message >>" "<< parameters.mention >>" "<< parameters.webhook_url >>"
+            # Set environment variables
+            export CIRCLE_PROJECT_REPONAME="$CIRCLE_PROJECT_REPONAME"
+            export CIRCLE_BRANCH="$CIRCLE_BRANCH"
+            export CIRCLE_BUILD_URL="$CIRCLE_BUILD_URL"
+            export CIRCLE_BUILD_NUM="$CIRCLE_BUILD_NUM"
+
+            # Execute script
+            /tmp/slack-notify.sh "<< parameters.status >>" "<< parameters.target >>" "<< parameters.message >>" "<< parameters.mention >>" "<< parameters.webhook_url >>"

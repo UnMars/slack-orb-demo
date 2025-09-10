@@ -20,7 +20,7 @@ usage:
           filters:
             branches:
               only: main
-      
+
       # Notify team channel
       - notification/slack:
           target: "#devops"
@@ -28,21 +28,21 @@ usage:
           status: "failure"
           mention: "@here"
           when: on_fail
-      
+
       # Notify everyone
       - notification/slack:
           target: "@here"
           message: "New feature deployed to staging! 🎉"
           status: "info"
           mention: "@devops-team @qa-team"
-      
+
       # Notify specific channel with custom message
       - notification/slack:
           target: "#alerts"
           message: "Database migration completed successfully"
           status: "success"
           mention: "@dba-team"
-      
+
       # Use the job for multiple notifications
       - notification/notify:
           target: "#general"
