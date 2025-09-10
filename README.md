@@ -1,62 +1,172 @@
-# Orb Template
+# Slack Notification Orb for CircleCI
 
+A simple and powerful Slack notification orb for CircleCI. Send targeted notifications to specific people, teams, or channels with customizable messages and build status.
 
-[![CircleCI Build Status](https://circleci.com/gh/UnMars/slack-orb-demo.svg?style=shield "CircleCI Build Status")](https://circleci.com/gh/UnMars/slack-orb-demo) [![CircleCI Orb Version](https://badges.circleci.com/orbs/unmars/slack-orb-demo.svg)](https://circleci.com/developer/orbs/orb/unmars/slack-orb-demo) [![GitHub License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/UnMars/slack-orb-demo/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/orbs)
+## Features
 
+- 🎯 **Targeted notifications**: Send to specific people (@username), teams (@channel), or channels (#channel)
+- 🎨 **Rich formatting**: Customizable messages with emojis and colors
+- 📊 **Build context**: Automatic inclusion of project, branch, and build information
+- 🔧 **Flexible**: Easy to customize and extend
+- 📱 **Real-time**: Instant notifications for your team
+- 💬 **Mentions**: Additional mentions for specific teams or people
 
+## Usage
 
-A project template for Orbs.
-
-This repository is designed to be automatically ingested and modified by the CircleCI CLI's `orb init` command.
-
-_**Edit this area to include a custom title and description.**_
-
----
-
-## Resources
-
-[CircleCI Orb Registry Page](https://circleci.com/developer/orbs/orb/unmars/slack-orb-demo) - The official registry page of this orb for all versions, executors, commands, and jobs described.
-
-[CircleCI Orb Docs](https://circleci.com/docs/orb-intro/#section=configuration) - Docs for using, creating, and publishing CircleCI Orbs.
-
-### How to Contribute
-
-We welcome [issues](https://github.com/UnMars/slack-orb-demo/issues) to and [pull requests](https://github.com/UnMars/slack-orb-demo/pulls) against this repository!
-
-### How to Publish An Update
-1. Merge pull requests with desired changes to the main branch.
-    - For the best experience, squash-and-merge and use [Conventional Commit Messages](https://conventionalcommits.org/).
-2. Find the current version of the orb.
-    - You can run `circleci orb info unmars/slack-orb-demo | grep "Latest"` to see the current version.
-3. Create a [new Release](https://github.com/UnMars/slack-orb-demo/releases/new) on GitHub.
-    - Click "Choose a tag" and _create_ a new [semantically versioned](http://semver.org/) tag. (ex: v1.0.0)
-      - We will have an opportunity to change this before we publish if needed after the next step.
-4.  Click _"+ Auto-generate release notes"_.
-    - This will create a summary of all of the merged pull requests since the previous release.
-    - If you have used _[Conventional Commit Messages](https://conventionalcommits.org/)_ it will be easy to determine what types of changes were made, allowing you to ensure the correct version tag is being published.
-5. Now ensure the version tag selected is semantically accurate based on the changes included.
-6. Click _"Publish Release"_.
-    - This will push a new tag and trigger your publishing pipeline on CircleCI.
-
-### Development Orbs
-
-Prerequisites:
-
-- An initial sevmer deployment must be performed in order for Development orbs to be published and seen in the [Orb Registry](https://circleci.com/developer/orbs).
-
-A [Development orb](https://circleci.com/docs/orb-concepts/#development-orbs) can be created to help with rapid development or testing. To create a Development orb, change the `orb-tools/publish` job in `test-deploy.yml` to be the following:
+### Basic Usage
 
 ```yaml
-- orb-tools/publish:
-    orb_name: unmars/slack-orb-demo
-    vcs_type: << pipeline.project.type >>
-    pub_type: dev
-    # Ensure this job requires all test jobs and the pack job.
-    requires:
-      - orb-tools/pack
-      - command-test
-    context: orb-publishing
-    filters: *filters
+version: 2.1
+
+orbs:
+  notification: unmars/slack-orb-demo@dev:alpha
+
+workflows:
+  notify_example:
+    jobs:
+      - notification/notify:
+          slack_channel: "#devops"
+          message: "Deployment completed successfully! 🚀"
+          status: "success"
 ```
 
-The job output will contain a link to the Development orb Registry page. The parameters `enable_pr_comment` and `github_token` can be set to add the relevant publishing information onto a pull request. Please refer to the [orb-tools/publish](https://circleci.com/developer/orbs/orb/circleci/orb-tools#jobs-publish) documentation for more information and options.
+### Individual Commands
+
+#### Slack Notification
+
+```yaml
+- notification/slack:
+    channel: "#general"
+    message: "Build completed!"
+    status: "success"
+    webhook_url: $SLACK_WEBHOOK_URL
+```
+
+#### Discord Notification
+
+```yaml
+- notification/discord:
+    webhook_url: $DISCORD_WEBHOOK_URL
+    message: "Build completed!"
+    status: "success"
+    username: "CircleCI Bot"
+```
+
+#### Teams Notification
+
+```yaml
+- notification/teams:
+    webhook_url: $TEAMS_WEBHOOK_URL
+    message: "Build completed!"
+    status: "success"
+    title: "CircleCI Build Notification"
+```
+
+#### Custom Webhook
+
+```yaml
+- notification/webhook:
+    webhook_url: $CUSTOM_WEBHOOK_URL
+    message: "Build completed!"
+    status: "success"
+    custom_payload: |
+      {
+        "custom_field": "custom_value",
+        "status": "success"
+      }
+```
+
+## Parameters
+
+### Common Parameters
+
+- `message`: Message to send (default: "Build completed!")
+- `status`: Build status - success, failure, warning (default: "success")
+- `webhook_url`: Webhook URL for the service
+
+### Slack-specific
+
+- `channel`: Slack channel (default: "#general")
+
+### Discord-specific
+
+- `username`: Bot username (default: "CircleCI Bot")
+
+### Teams-specific
+
+- `title`: Notification title (default: "CircleCI Build Notification")
+
+### Webhook-specific
+
+- `custom_payload`: Custom JSON payload (overrides default)
+
+## Environment Variables
+
+Set these in your CircleCI project settings:
+
+- `SLACK_WEBHOOK_URL`: Your Slack webhook URL
+- `DISCORD_WEBHOOK_URL`: Your Discord webhook URL
+- `TEAMS_WEBHOOK_URL`: Your Teams webhook URL
+- `CUSTOM_WEBHOOK_URL`: Your custom webhook URL
+
+## Examples
+
+### Complete Workflow
+
+```yaml
+version: 2.1
+
+orbs:
+  notification: unmars/slack-orb-demo@dev:alpha
+
+workflows:
+  ci_cd_pipeline:
+    jobs:
+      - build
+      - test
+      - deploy:
+          requires: [build, test]
+      - notification/notify:
+          slack_channel: "#deployments"
+          message: "Deployment to production completed! 🚀"
+          status: "success"
+          requires: [deploy]
+          filters:
+            branches:
+              only: main
+```
+
+### Conditional Notifications
+
+```yaml
+- notification/notify:
+    slack_channel: "#alerts"
+    message: "Build failed on branch $CIRCLE_BRANCH"
+    status: "failure"
+    when: on_fail
+```
+
+## Development
+
+This orb is built using the CircleCI CLI and follows the standard orb structure:
+
+- `src/commands/`: Individual notification commands
+- `src/jobs/`: Combined notification jobs
+- `src/executors/`: Execution environments
+- `src/examples/`: Usage examples
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## Support
+
+For issues and questions, please open an issue on GitHub.

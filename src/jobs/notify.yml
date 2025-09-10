@@ -1,0 +1,42 @@
+description: >
+  Send targeted Slack notifications to specific people, teams, or channels
+  with customizable messages and build status.
+
+parameters:
+  target:
+    type: string
+    description: "Target recipient: @username, @channel, #channel, or @here"
+    default: "#general"
+  
+  message:
+    type: string
+    description: "Custom message to send"
+    default: "Build completed!"
+  
+  status:
+    type: string
+    description: "Build status (success, failure, warning, info)"
+    default: "success"
+  
+  mention:
+    type: string
+    description: "Additional mentions (e.g., @devops-team @manager)"
+    default: ""
+  
+  webhook_url:
+    type: string
+    description: "Slack webhook URL"
+    default: $SLACK_WEBHOOK_URL
+
+executor: default
+
+steps:
+  - checkout
+  
+  - slack:
+      target: << parameters.target >>
+      message: << parameters.message >>
+      status: << parameters.status >>
+      mention: << parameters.mention >>
+      webhook_url: << parameters.webhook_url >>
+      when: on_success

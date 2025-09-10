@@ -1,13 +1,46 @@
-description: >
-  Sample example description.
-# Provide a use-case based example for using this orb.
-# Everything in the `usage` section will be displayed in the orb registry.
-# Comments are not retained.
-usage:
-  version: 2.1
-  orbs:
-    <orb-name>: <namespace>/<orb-name>@1.2.3
-  workflows:
-    use-my-orb:
-      jobs:
-        - <orb-name>/<job-name>
+version: 2.1
+
+orbs:
+  notification: unmars/slack-orb-demo@dev:alpha
+
+workflows:
+  example:
+    jobs:
+      # Notify specific person
+      - notification/slack:
+          target: "@guillaume"
+          message: "Your deployment to production completed successfully! 🚀"
+          status: "success"
+          mention: "@devops-team"
+          filters:
+            branches:
+              only: main
+      
+      # Notify team channel
+      - notification/slack:
+          target: "#devops"
+          message: "Build failed on branch $CIRCLE_BRANCH"
+          status: "failure"
+          mention: "@here"
+          when: on_fail
+      
+      # Notify everyone
+      - notification/slack:
+          target: "@here"
+          message: "New feature deployed to staging! 🎉"
+          status: "info"
+          mention: "@devops-team @qa-team"
+      
+      # Notify specific channel with custom message
+      - notification/slack:
+          target: "#alerts"
+          message: "Database migration completed successfully"
+          status: "success"
+          mention: "@dba-team"
+      
+      # Use the job for multiple notifications
+      - notification/notify:
+          target: "#general"
+          message: "Weekly deployment completed! 🚀"
+          status: "success"
+          mention: "@everyone"
