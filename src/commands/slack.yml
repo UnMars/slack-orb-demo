@@ -58,7 +58,7 @@ steps:
 
         # Create message with emoji and mentions
         FULL_MESSAGE="${MENTION_STRING}${EMOJI} << parameters.message >>"
-        
+
         # Export variables for next step
         echo "export EMOJI='$EMOJI'" >> $BASH_ENV
         echo "export COLOR='$COLOR'" >> $BASH_ENV
