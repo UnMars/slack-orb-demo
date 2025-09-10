@@ -43,8 +43,8 @@ usage:
 
       # Using commands directly in jobs
       - build:
-          steps:
-            - run: echo "Building..."
-            - notification/notify_success:
-                channel: "#builds"
-                message: "Build completed successfully!"
+        steps:
+          - run: echo "Building..."
+          - notification/notify_success:
+              channel: "#builds"
+              message: "Build completed successfully!"
