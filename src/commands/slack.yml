@@ -32,11 +32,5 @@ steps:
   - run:
       name: Send targeted Slack notification
       command: |
-            # Set environment variables
-            export CIRCLE_PROJECT_REPONAME="$CIRCLE_PROJECT_REPONAME"
-            export CIRCLE_BRANCH="$CIRCLE_BRANCH"
-            export CIRCLE_BUILD_URL="$CIRCLE_BUILD_URL"
-            export CIRCLE_BUILD_NUM="$CIRCLE_BUILD_NUM"
-
-            # Execute script
-            /tmp/slack-notify.sh "<< parameters.status >>" "<< parameters.target >>" "<< parameters.message >>" "<< parameters.mention >>" "<< parameters.webhook_url >>"
+        chmod +x /tmp/notify.sh
+        /tmp/notify.sh "<< parameters.status >>" "<< parameters.target >>" "<< parameters.message >>" "<< parameters.mention >>" "<< parameters.webhook_url >>"
