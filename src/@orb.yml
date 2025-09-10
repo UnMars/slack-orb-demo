@@ -79,15 +79,41 @@ commands:
             echo "export MENTION_STRING='$MENTION_STRING'" >> $BASH_ENV
 
       - slack/notify:
-          channel: << parameters.channel >>
-          message: |
-            ${FULL_MESSAGE}
-
-            *Status:* << parameters.status >>
-            *Project:* $CIRCLE_PROJECT_REPONAME
-            *Branch:* $CIRCLE_BRANCH
-            *Build:* <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>
-          color: $COLOR
+          event: always
+          custom: |
+            {
+              "channel": "<< parameters.channel >>",
+              "text": "${FULL_MESSAGE}",
+              "attachments": [
+                {
+                  "color": "$COLOR",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "<< parameters.status >>",
+                      "short": true
+                    },
+                    {
+                      "title": "Project",
+                      "value": "$CIRCLE_PROJECT_REPONAME",
+                      "short": true
+                    },
+                    {
+                      "title": "Branch",
+                      "value": "$CIRCLE_BRANCH",
+                      "short": true
+                    },
+                    {
+                      "title": "Build",
+                      "value": "<$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>",
+                      "short": true
+                    }
+                  ],
+                  "footer": "CircleCI",
+                  "ts": $(date +%s)
+                }
+              ]
+            }
 
 jobs:
   notify:
